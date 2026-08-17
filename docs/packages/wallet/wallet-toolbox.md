@@ -4,9 +4,9 @@ title: '@bsv/wallet-toolbox'
 kind: package
 domain: wallet
 npm: '@bsv/wallet-toolbox'
-version: '2.10.2'
-last_updated: '2026-08-14'
-last_verified: '2026-08-14'
+version: '2.11.0'
+last_updated: '2026-08-17'
+last_verified: '2026-08-17'
 review_cadence_days: 30
 status: stable
 tags: ['wallet', 'brc100']
@@ -55,6 +55,13 @@ make-primary flows continue matching the original endpoint URL.
 Opt-in remote-storage timing spans retain trace and parent-span correlation in
 the telemetry sink without adding headers to authenticated requests. BRC-103,
 BRC-104, AuthFetch, and the storage RPC wire contract remain unchanged.
+
+Wallet replication fills bounded pages with adaptive, size-aware reads. A
+client can set `includeTotals` on `RequestSyncChunkArgs` to request optional
+source record totals for exact progress and ETA displays. Providers that do not
+implement efficient totals omit them, preserving compatibility without adding
+count-query overhead. Knex storage creates the user-scoped proof lookup indexes
+through its normal migration path.
 
 UMP account lookup accepts one verified matching token as an existing account.
 When no token verifies, one clean empty overlay response establishes a new

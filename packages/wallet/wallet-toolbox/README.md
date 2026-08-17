@@ -48,7 +48,11 @@ The toolbox publishes three npm packages from this repo:
 Wallet storage replication applies each received page and its durable sync
 checkpoint in one provider transaction. IndexedDB and Knex therefore avoid
 per-record transaction startup, and a failed page rolls back without advancing
-the checkpoint. The sync wire format and persisted schemas are unchanged.
+the checkpoint. Sources fill each bounded page with adaptive, size-aware reads,
+and Knex storage adds user-scoped proof lookup indexes. Clients may set
+`includeTotals` on a sync-chunk request to receive optional source record totals
+for exact progress reporting. Older providers ignore the hint, and totals are
+not counted unless requested.
 
 ### UMP account continuity and phone changes
 
