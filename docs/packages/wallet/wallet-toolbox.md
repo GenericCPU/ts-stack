@@ -60,8 +60,11 @@ Wallet replication fills bounded pages with adaptive, size-aware reads. A
 client can set `includeTotals` on `RequestSyncChunkArgs` to request optional
 source record totals for exact progress and ETA displays. Providers that do not
 implement efficient totals omit them, preserving compatibility without adding
-count-query overhead. Knex storage creates the user-scoped proof lookup indexes
-through its normal migration path.
+count-query overhead. Clients also carry the writer-local sync-state identifier
+selected at provider registration so upgraded providers can safely address a
+legacy duplicate checkpoint. Older clients and providers remain supported.
+Knex storage creates the user-scoped proof lookup indexes through its normal
+migration path.
 
 UMP account lookup accepts one verified matching token as an existing account.
 When no token verifies, one clean empty overlay response establishes a new

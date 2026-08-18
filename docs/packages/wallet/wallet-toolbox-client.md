@@ -22,7 +22,9 @@ storage client without Node-only Knex, SQLite, MySQL, or filesystem adapters.
 Wallet replication uses adaptive, size-aware source reads. Browser clients can
 set `includeTotals` on sync-chunk requests to obtain optional source record
 totals for exact progress displays; older providers remain compatible and may
-omit the totals.
+omit the totals. New clients also carry the registered writer-local sync-state
+identifier to disambiguate legacy duplicate checkpoints on upgraded providers;
+older protocol peers remain compatible.
 Related browser `noSend` chains retain local action batching, while unrelated
 actions cannot join or commit the active workspace. Supported remote providers
 can resume a soft-expired workspace using its exact persisted inputs.

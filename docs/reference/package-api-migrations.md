@@ -477,8 +477,8 @@ CLI entry points: `{"wallet-relay":"./bin/init.mjs"}`.
 
 - Package documentation: [docs/packages/wallet/wallet-toolbox.md](../packages/wallet/wallet-toolbox.md)
 - Source: [packages/wallet/wallet-toolbox](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/wallet/wallet-toolbox)
-- Release note: Accelerates wallet-storage replication with adaptive size-aware source reads and user-scoped SQL proof indexes, and adds opt-in source record totals for exact progress reporting.
-- Migration: No consumer migration is required. Existing sync requests and providers remain wire-compatible. Clients may optionally set includeTotals; capable providers return totals, older providers ignore the hint, and SQL storage creates the new indexes through its normal migration path.
+- Release note: Accelerates wallet-storage replication with adaptive size-aware source reads and user-scoped SQL proof indexes, adds opt-in source record totals for exact progress reporting, and disambiguates legacy duplicate sync checkpoints.
+- Migration: No consumer migration is required. Existing sync requests and providers remain wire-compatible. Clients may optionally set includeTotals; capable providers return totals, older providers ignore the hint, and upgraded clients automatically carry a writer-local sync-state identifier that upgraded providers use when legacy checkpoints collide. SQL storage creates the new indexes through its normal migration path.
 
 | Public subpath   | Runtime target(s)                                    | Declaration target(s)      |
 | ---------------- | ---------------------------------------------------- | -------------------------- |
@@ -491,8 +491,8 @@ CLI entry points: `{"wallet-relay":"./bin/init.mjs"}`.
 
 - Package documentation: [docs/packages/wallet/wallet-toolbox-client.md](../packages/wallet/wallet-toolbox-client.md)
 - Source: [packages/wallet/wallet-toolbox/client](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/wallet/wallet-toolbox/client)
-- Release note: Carries adaptive size-aware wallet sync reads and the backward-compatible includeTotals progress contract for browser and WebView wallets.
-- Migration: No consumer migration is required. Existing browser sync calls remain valid; applications may optionally request and consume source totals, while older remote providers continue to work without them.
+- Release note: Carries adaptive size-aware wallet sync reads, the backward-compatible includeTotals progress contract, and duplicate-checkpoint disambiguation for browser and WebView wallets.
+- Migration: No consumer migration is required. Existing browser sync calls remain valid; applications may optionally request and consume source totals, upgraded clients automatically carry the registered sync-state identifier, and older remote providers continue to work without either addition.
 
 | Public subpath   | Runtime target(s)                                                                | Declaration target(s)                                                                  |
 | ---------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
@@ -503,8 +503,8 @@ CLI entry points: `{"wallet-relay":"./bin/init.mjs"}`.
 
 - Package documentation: [docs/packages/wallet/wallet-toolbox-mobile.md](../packages/wallet/wallet-toolbox-mobile.md)
 - Source: [packages/wallet/wallet-toolbox/mobile](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/wallet/wallet-toolbox/mobile)
-- Release note: Carries adaptive size-aware wallet sync reads and the backward-compatible includeTotals progress contract for React Native wallets.
-- Migration: No consumer migration is required. Existing mobile sync calls remain valid; applications may optionally request and consume source totals, while older remote providers continue to work without them.
+- Release note: Carries adaptive size-aware wallet sync reads, the backward-compatible includeTotals progress contract, and duplicate-checkpoint disambiguation for React Native wallets.
+- Migration: No consumer migration is required. Existing mobile sync calls remain valid; applications may optionally request and consume source totals, upgraded clients automatically carry the registered sync-state identifier, and older remote providers continue to work without either addition.
 
 | Public subpath   | Runtime target(s)                                                                | Declaration target(s)                                                                  |
 | ---------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
