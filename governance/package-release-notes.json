@@ -196,22 +196,22 @@
       "name": "@bsv/wallet-toolbox",
       "publishedVersion": "2.10.2",
       "releaseType": "minor",
-      "summary": "Accelerates wallet-storage replication with adaptive size-aware source reads and user-scoped SQL proof indexes, and adds opt-in source record totals for exact progress reporting.",
-      "migration": "No consumer migration is required. Existing sync requests and providers remain wire-compatible. Clients may optionally set includeTotals; capable providers return totals, older providers ignore the hint, and SQL storage creates the new indexes through its normal migration path."
+      "summary": "Accelerates wallet-storage replication with adaptive size-aware source reads and user-scoped SQL proof indexes, adds opt-in source record totals for exact progress reporting, and disambiguates legacy duplicate sync checkpoints.",
+      "migration": "No consumer migration is required. Existing sync requests and providers remain wire-compatible. Clients may optionally set includeTotals; capable providers return totals, older providers ignore the hint, and upgraded clients automatically carry a writer-local sync-state identifier that upgraded providers use when legacy checkpoints collide. SQL storage creates the new indexes through its normal migration path."
     },
     {
       "name": "@bsv/wallet-toolbox-client",
       "publishedVersion": "2.10.2",
       "releaseType": "minor",
-      "summary": "Carries adaptive size-aware wallet sync reads and the backward-compatible includeTotals progress contract for browser and WebView wallets.",
-      "migration": "No consumer migration is required. Existing browser sync calls remain valid; applications may optionally request and consume source totals, while older remote providers continue to work without them."
+      "summary": "Carries adaptive size-aware wallet sync reads, the backward-compatible includeTotals progress contract, and duplicate-checkpoint disambiguation for browser and WebView wallets.",
+      "migration": "No consumer migration is required. Existing browser sync calls remain valid; applications may optionally request and consume source totals, upgraded clients automatically carry the registered sync-state identifier, and older remote providers continue to work without either addition."
     },
     {
       "name": "@bsv/wallet-toolbox-mobile",
       "publishedVersion": "2.10.2",
       "releaseType": "minor",
-      "summary": "Carries adaptive size-aware wallet sync reads and the backward-compatible includeTotals progress contract for React Native wallets.",
-      "migration": "No consumer migration is required. Existing mobile sync calls remain valid; applications may optionally request and consume source totals, while older remote providers continue to work without them."
+      "summary": "Carries adaptive size-aware wallet sync reads, the backward-compatible includeTotals progress contract, and duplicate-checkpoint disambiguation for React Native wallets.",
+      "migration": "No consumer migration is required. Existing mobile sync calls remain valid; applications may optionally request and consume source totals, upgraded clients automatically carry the registered sync-state identifier, and older remote providers continue to work without either addition."
     },
     {
       "name": "create-bsv-app",
