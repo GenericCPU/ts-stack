@@ -561,6 +561,43 @@ describe('in-memory action batch workspace', () => {
     expect(spent.spendable).toBe(false)
   })
 
+  test('an external input carried in inputBEEF reserves nothing', async () => {
+    const other = await _tu.createLegacyWalletSQLiteCopy(`${expect.getState().currentTestName ?? 'actionBatch'}Other`)
+    _tu.mockPostServicesAsSuccess([other])
+    jest.spyOn(other.services, 'getChainTracker').mockResolvedValue({ isValidRootForHeight: async () => true } as any)
+    jest.spyOn(other.activeStorage, 'getServices').mockReturnValue(other.services)
+    try {
+      other.wallet.randomVals = randomVals
+      const external = await other.wallet.createAction({
+        description: 'Create an input this wallet does not store',
+        outputs: [{ satoshis: 2, lockingScript: '7551', outputDescription: 'external explicit input' }],
+        options: { randomizeOutputs: false, acceptDelayedBroadcast: false }
+      })
+      ctx.wallet.randomVals = randomVals
+      const extend = jest.spyOn(ctx.storage, 'extendActionBatch')
+      const opened = await ctx.wallet.createAction(actionArgs())
+      const spending = await ctx.wallet.createAction({
+        inputs: [
+          { outpoint: `${external.txid}.0`, unlockingScript: '00', inputDescription: 'spend external explicit input' }
+        ],
+        inputBEEF: external.tx,
+        outputs: [{ satoshis: 1, lockingScript: '51', outputDescription: 'external-input output' }],
+        description: 'Spend an external output inside the batch',
+        options: { noSend: true, noSendChange: opened.noSendChange, randomizeOutputs: false }
+      })
+      const reserved = extend.mock.calls.flatMap(([args]) => args.explicitOutpoints)
+      expect(reserved).not.toContainEqual(expect.objectContaining({ txid: external.txid }))
+      await expect(
+        ctx.wallet.createAction({
+          description: 'Commit the batch that spends an external output',
+          options: { sendWith: [opened.txid!, spending.txid!] }
+        })
+      ).resolves.toBeDefined()
+    } finally {
+      await other.wallet.destroy()
+    }
+  })
+
   test('providers without the capability use the legacy path before planning begins', async () => {
     const capabilities = jest.spyOn(ctx.storage, 'getCapabilities').mockResolvedValue({})
     const legacyCreate = jest.spyOn(ctx.storage, 'createAction')
