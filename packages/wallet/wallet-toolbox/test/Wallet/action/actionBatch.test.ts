@@ -529,6 +529,38 @@ describe('in-memory action batch workspace', () => {
     })
   })
 
+  test('a stored explicit input is reserved even when inputBEEF already carries its source', async () => {
+    ctx.wallet.randomVals = randomVals
+    const stored = await ctx.wallet.createAction({
+      description: 'Store an explicit input source',
+      outputs: [
+        { satoshis: 2, lockingScript: '7551', outputDescription: 'stored explicit input', basket: 'held basket' }
+      ],
+      options: { randomizeOutputs: false, acceptDelayedBroadcast: false }
+    })
+    const held = `${stored.txid}.0`
+    const extend = jest.spyOn(ctx.storage, 'extendActionBatch')
+    const opened = await ctx.wallet.createAction(actionArgs())
+    const spending = await ctx.wallet.createAction({
+      inputs: [{ outpoint: held, unlockingScript: '00', inputDescription: 'spend stored explicit input' }],
+      inputBEEF: stored.tx,
+      outputs: [{ satoshis: 1, lockingScript: '51', outputDescription: 'stored-input output' }],
+      description: 'Spend a stored output inside the batch',
+      options: { noSend: true, noSendChange: opened.noSendChange, randomizeOutputs: false }
+    })
+    await ctx.wallet.createAction({
+      description: 'Commit the batch that spends a stored output',
+      options: { sendWith: [opened.txid!, spending.txid!] }
+    })
+    expect(extend).toHaveBeenCalledWith(
+      expect.objectContaining({ explicitOutpoints: [expect.objectContaining({ txid: stored.txid, vout: 0 })] })
+    )
+    const [spent] = await ctx.activeStorage.findOutputs({
+      partial: { userId: ctx.userId, txid: stored.txid, vout: 0 }
+    })
+    expect(spent.spendable).toBe(false)
+  })
+
   test('providers without the capability use the legacy path before planning begins', async () => {
     const capabilities = jest.spyOn(ctx.storage, 'getCapabilities').mockResolvedValue({})
     const legacyCreate = jest.spyOn(ctx.storage, 'createAction')

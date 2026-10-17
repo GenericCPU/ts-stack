@@ -348,16 +348,16 @@ class ActionBatchWorkspace {
     }
   }
 
+  /**
+   * Explicit inputs this batch has neither staged nor reserved. Whether the
+   * source transaction is already in `sharedBeef` does not matter: a stored
+   * output must still be reserved, or commit rejects it as "not reserved by
+   * this action batch". Outpoints with no storage row reserve nothing.
+   */
   private missingExplicitOutpoints(args: ValidCreateActionArgs): Array<{ txid: string; vout: number }> {
     return [...args.inputs.map(input => input.outpoint), ...args.options.noSendChange].filter(outpoint => {
       const key = `${outpoint.txid}.${outpoint.vout}`
-      return (
-        !this.state.staged.has(key) &&
-        !this.state.explicit.has(key) &&
-        !this.state.reserved.has(key) &&
-        (this.state.discardedStagedTxids.has(outpoint.txid) ||
-          this.state.sharedBeef.findTxid(outpoint.txid)?.tx == null)
-      )
+      return !this.state.staged.has(key) && !this.state.explicit.has(key) && !this.state.reserved.has(key)
     })
   }
 
