@@ -140,6 +140,7 @@ export class StorageIdb extends StorageProvider implements WalletStorageProvider
 
   constructor(options: StorageIdbOptions) {
     super(options)
+    if (options.dbName?.trim() === '') throw new WERR_INVALID_PARAMETER('dbName', 'a non-empty IndexedDB database name')
     this.dbName = options.dbName ?? `wallet-toolbox-${this.chain}net`
   }
 

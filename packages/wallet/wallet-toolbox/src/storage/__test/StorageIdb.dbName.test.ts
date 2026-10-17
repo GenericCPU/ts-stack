@@ -26,6 +26,11 @@ describe('StorageIdb database name', () => {
     expect(new StorageIdb(options()).dbName).toBe('wallet-toolbox-testnet')
   })
 
+  test('refuses a blank name instead of opening an unnamed database', () => {
+    expect(() => new StorageIdb(options(''))).toThrow('dbName')
+    expect(() => new StorageIdb(options('  '))).toThrow('dbName')
+  })
+
   test('named stores keep their users apart', async () => {
     const identityKey = PrivateKey.fromRandom().toPublicKey().toString()
     const a = await open(`dbName-a-${randomUUID()}`)
