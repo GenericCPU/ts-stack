@@ -2,7 +2,8 @@ import { PrivateKey, PublicKey, KeyDeriverApi } from '@bsv/sdk'
 import type { SpendVerifierInterface } from '@bsv/sdk'
 import type { ManagedChangePolicyOptions } from './storage/methods/managedChangePolicy'
 
-import { Wallet, type WalletArgs } from './Wallet'
+import { Wallet } from './Wallet'
+import type { ActionBatchMode } from './signer/actionBatch/ActionBatchWorkspace'
 import { Chain } from './sdk/types'
 import { WalletStorageManager } from './storage/WalletStorageManager'
 import { Services } from './services/Services'
@@ -109,7 +110,7 @@ export interface SetupClientWalletArgs {
    * only through a later `sendWith`. A caller that broadcasts `noSend`
    * transactions itself needs `legacy` so each one is stored when signed.
    */
-  actionBatchMode?: WalletArgs['actionBatchMode']
+  actionBatchMode?: ActionBatchMode
 }
 
 /**

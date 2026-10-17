@@ -25,7 +25,8 @@ import { WalletStorageManager } from './storage/WalletStorageManager'
 import { Services } from './services/Services'
 import { Monitor } from './monitor/Monitor'
 import { PrivilegedKeyManager } from './sdk/PrivilegedKeyManager'
-import { Wallet, type WalletArgs } from './Wallet'
+import { Wallet } from './Wallet'
+import type { ActionBatchMode } from './signer/actionBatch/ActionBatchWorkspace'
 import { StorageClient } from './storage/remoting/StorageClient'
 import { StorageKnex } from './storage/StorageKnex'
 import { WalletStorageProvider } from './sdk/WalletStorage.interfaces'
@@ -473,7 +474,7 @@ export interface SetupWalletArgs {
   /** Optional prepared-BEEF (COOK) rollout controls for Knex storage. */
   preparedBeef?: PreparedBeefOptions
   /** Optional. Forwarded to `WalletArgs.actionBatchMode`; defaults to `auto`. */
-  actionBatchMode?: WalletArgs['actionBatchMode']
+  actionBatchMode?: ActionBatchMode
 }
 
 /**
