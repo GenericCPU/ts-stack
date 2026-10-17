@@ -24,7 +24,7 @@ import { WalletStorageManager } from './storage/WalletStorageManager'
 import { Services } from './services/Services'
 import { Monitor } from './monitor/Monitor'
 import { PrivilegedKeyManager } from './sdk/PrivilegedKeyManager'
-import { Wallet } from './Wallet'
+import { Wallet, type WalletArgs } from './Wallet'
 import { StorageClient } from './storage/remoting/StorageClient'
 import { StorageKnex } from './storage/StorageKnex'
 import { WalletStorageProvider } from './sdk/WalletStorage.interfaces'
@@ -169,7 +169,8 @@ DEV_KEYS = '{
       services,
       monitor,
       privilegedKeyManager,
-      scriptVerifier: args.scriptVerifier
+      scriptVerifier: args.scriptVerifier,
+      actionBatchMode: args.actionBatchMode
     })
     const r: SetupWallet = {
       rootKey,
@@ -498,6 +499,8 @@ export interface SetupWalletArgs {
   managedChangePolicy?: ManagedChangePolicyOptions
   /** Optional prepared-BEEF (COOK) rollout controls for Knex storage. */
   preparedBeef?: PreparedBeefOptions
+  /** Optional. Forwarded to `WalletArgs.actionBatchMode`; defaults to `auto`. */
+  actionBatchMode?: WalletArgs['actionBatchMode']
 }
 
 /**
