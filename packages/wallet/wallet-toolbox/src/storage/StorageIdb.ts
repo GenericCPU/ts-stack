@@ -347,10 +347,9 @@ export class StorageIdb extends StorageProvider implements WalletStorageProvider
       if (output != null) {
         // mark output as spent by transactionId
         await this.updateOutput(output.outputId, { spendable: false, spentBy: transactionId }, dbTrx)
-        // Hydrate the locking script for the chosen output. Identical to Knex canon at
-        // StorageKnex.allocateChangeInput: required when the script was offloaded into
-        // rawTx storage due to exceeding maxOutputScript.
-        await this.validateOutputScript(output, dbTrx)
+        // The candidate scan cleared every script; restore the chosen one, whether
+        // it was offloaded into rawTx storage or stored inline on the row.
+        await this.restoreOutputScript(output, dbTrx)
       }
       return output
     } finally {

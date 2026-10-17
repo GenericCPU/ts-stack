@@ -370,7 +370,8 @@ async function makeFundingResult(
   const beef = new Beef()
   const result: ActionBatchFundingOutput[] = []
   for (const output of outputs) {
-    await storage.validateOutputScript(output)
+    // Funding candidates come from a `noScript` scan.
+    await storage.restoreOutputScript(output)
     const copy: ActionBatchFundingOutput = { ...output }
     if (args.isSignAction && args.includeAllSourceTransactions) {
       copy.sourceTransaction = await storage.getRawTxOfKnownValidTransaction(output.txid)

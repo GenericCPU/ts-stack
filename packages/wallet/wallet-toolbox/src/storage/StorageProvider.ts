@@ -1909,6 +1909,21 @@ export abstract class StorageProvider extends StorageReaderWriter implements Wal
     if (script == null) return
     o.lockingScript = script
   }
+
+  /**
+   * Restore the locking script of an output read with `noScript: true`.
+   *
+   * `validateOutputScript` only reloads a script offloaded into the raw
+   * transaction. A script stored inline on the row is left cleared, so a
+   * funding output chosen from a `noScript` scan reaches the signer without
+   * one. Reread the row in that case.
+   */
+  async restoreOutputScript(o: TableOutput, trx?: TrxToken): Promise<void> {
+    await this.validateOutputScript(o, trx)
+    if (o.lockingScript != null && o.lockingScript.length > 0) return
+    const stored = await this.findOutputById(o.outputId, trx)
+    if (stored?.lockingScript != null && stored.lockingScript.length > 0) o.lockingScript = stored.lockingScript
+  }
 }
 
 export interface StorageProviderOptions extends StorageReaderWriterOptions {
