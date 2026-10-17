@@ -75,6 +75,7 @@ import { WERR_INTERNAL, WERR_INVALID_OPERATION, WERR_INVALID_PARAMETER, WERR_UNA
 import { EntityTimeStamp, TransactionStatus } from '../sdk/types'
 import { isAutoSpendableChangeOutput, managedChangeOutputFields } from './methods/managedChange'
 import { selectCanonicalChange } from './methods/actionPlanning'
+import { restoreOutputScript } from './methods/restoreOutputScript'
 import {
   DEFAULT_MANAGED_CHANGE_MINIMUM_SATOSHIS,
   isLegacyManagedChangeBasketDefault
@@ -349,7 +350,7 @@ export class StorageIdb extends StorageProvider implements WalletStorageProvider
         await this.updateOutput(output.outputId, { spendable: false, spentBy: transactionId }, dbTrx)
         // The candidate scan cleared every script; restore the chosen one, whether
         // it was offloaded into rawTx storage or stored inline on the row.
-        await this.restoreOutputScript(output, dbTrx)
+        await restoreOutputScript(this, output, dbTrx)
       }
       return output
     } finally {

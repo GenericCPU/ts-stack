@@ -2,6 +2,7 @@ import { TableOutput, TableOutputBasket } from '../schema/tables'
 import { _tu, TestWalletNoSetup, TestWalletProviderNoSetup } from '../../../test/utils/TestUtilsWalletStorage'
 import 'fake-indexeddb/auto'
 import { managedChangeOutputFields } from '../methods/managedChange'
+import { restoreOutputScript } from '../methods/restoreOutputScript'
 
 /**
  * Change candidates are scanned with `noScript: true`, which clears every
@@ -111,7 +112,7 @@ describe('funding outputs keep their locking script', () => {
         const raw = await ctx.activeStorage.getRawTxOfKnownValidTransaction(scanned.txid)
         if (raw == null) continue
         const expected = raw.slice(scanned.scriptOffset, scanned.scriptOffset + (scanned.scriptLength ?? 0))
-        await ctx.activeStorage.restoreOutputScript(scanned)
+        await restoreOutputScript(ctx.activeStorage, scanned)
         expect(Array.from(scanned.lockingScript ?? [])).toEqual(Array.from(expected))
         if (++checked === 3) break
       }
@@ -129,7 +130,7 @@ describe('funding outputs keep their locking script', () => {
       expect(scanned.lockingScript).toBeUndefined()
       await ctx.activeStorage.validateOutputScript(scanned)
       expect(scanned.lockingScript).toBeUndefined()
-      await ctx.activeStorage.restoreOutputScript(scanned)
+      await restoreOutputScript(ctx.activeStorage, scanned)
       expect(Array.from(scanned.lockingScript ?? [])).toEqual(p2pkhScript)
     }
   })
