@@ -366,12 +366,13 @@ class ActionBatchWorkspace {
   }
 
   private async storedOutpoints(outpoints: Array<{ txid: string; vout: number }>): Promise<Set<string>> {
-    const stored = new Set<string>()
-    for (const { txid, vout } of outpoints) {
-      const rows = await this.wallet.storage.findOutputs({ partial: { txid, vout }, noScript: true })
-      if (rows.length > 0) stored.add(`${txid}.${vout}`)
-    }
-    return stored
+    const found = await Promise.all(
+      outpoints.map(async ({ txid, vout }) => {
+        const rows = await this.wallet.storage.findOutputs({ partial: { txid, vout }, noScript: true })
+        return rows.length > 0 ? `${txid}.${vout}` : undefined
+      })
+    )
+    return new Set(found.filter((key): key is string => key != null))
   }
 
   private async extend(
